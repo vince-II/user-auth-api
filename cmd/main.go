@@ -1,19 +1,39 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
+
+	"github.com/vince-II/auth-post-api/internal/handlers"
 )
 
 func main() {
-	server := &http.Server{
-		Addr: ":8080",
+	// load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
 
-	fmt.Println("Starting server on :8080")
+	// initialiaze the fiber instance
+	app := fiber.New()
 
-	// Start the server
-	if err := server.ListenAndServe(); err != nil {
-		fmt.Println("Error starting server:", err)
-	}
+	// connect to the database
+	// db, err := database.Connect()
+	// if err != nil {
+	// 	log.Fatal("Error connecting to the database")
+	// }
+
+	// prefix
+	api := app.Group("/api")
+
+	// register routes
+	api.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
+
+	app.Post("/posts", handlers.GetUserPosts)
+
+	app.Listen(":3000")
 }
