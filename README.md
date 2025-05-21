@@ -18,9 +18,8 @@ Built with [Fiber](https://gofiber.io/), [GORM](https://gorm.io/), and JWT-based
 
 - **Go** (Golang)
 - **Fiber** – Web framework
-- **GORM** – ORM for PostgreSQL (or SQLite)
 - **JWT** – Secure token-based authentication
-- **dotenv** – For environment variable management
+- **MongoDB** - Database
 
 ---
 
