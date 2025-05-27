@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.env
+dist
+coverage
+*.md
+*.log
+.idea
+.vscode
+test
+__tests__
+*.tsbuildinfo
+# db_data/

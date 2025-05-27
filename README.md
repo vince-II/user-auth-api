@@ -44,12 +44,13 @@ go-auth-post/
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+### 1. Build and start the containers:
 
-```bash
-git clone https://github.com/yourusername/go-auth-post.git
-cd go-auth-post
+```sh
+docker compose up --build
 ```
+
+1.1. The application should now be running and accessible at `http://localhost:3000`.
 
 ### 2. Set up environment variables
 

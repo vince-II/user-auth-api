@@ -13,7 +13,7 @@ services:
     depends_on:
       - example_db
 
-  example_db:
+  dev_db:
     container_name: example_db
     image: postgres:17-alpine
     environment:
