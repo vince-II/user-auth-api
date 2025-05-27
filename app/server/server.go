@@ -23,9 +23,7 @@ func NewServer(ctx context.Context, conn *sqlc.Queries) *fiber.App {
 	api := app.Group("/api", middleware)
 
 	api.Get("/health", handlers.HealthCheck())
-	api.Get("/status", func(c *fiber.Ctx) error {
-		return c.SendString("ok")
-	})
+
 	// api/v1
 	// v1 := api.Group("/v1", middleware)
 	// v1.Get("/health", handlers.HealthCheck())
