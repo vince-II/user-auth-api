@@ -4,6 +4,8 @@ FROM golang:1.24-alpine
 # Goes to the app directory
 WORKDIR /src/app
 
+RUN apk add --no-cache git
+
 #  Copy the application code into the container
 COPY app ./
 

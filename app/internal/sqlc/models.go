@@ -16,15 +16,11 @@ type Post struct {
 }
 
 type User struct {
-	ID        int32  `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-}
-
-type UserLogin struct {
 	ID        int32            `json:"id"`
-	Token     string           `json:"token"`
-	LastLogin pgtype.Timestamp `json:"last_login"`
 	Username  string           `json:"username"`
 	Password  string           `json:"password"`
+	FirstName string           `json:"first_name"`
+	LastName  string           `json:"last_name"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
 }

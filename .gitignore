@@ -25,3 +25,5 @@ go.work.sum
 .env
 
 db_data/
+
+db/pg_dump.sql

@@ -1,11 +1,11 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "app/db/queries"
-    schema: "app/db/schema.sql"
+    queries: "db/queries"
+    schema: "db/schema.sql"
     gen:
       go:
-        out: "app/db/sqlc"
+        out: "app/internal/sqlc"
         sql_package: "pgx/v5"
         json_tags_case_style: "snake"
         emit_json_tags: true
