@@ -12,10 +12,8 @@ import (
 
 func RegisterUserHandler(conn *sqlc.Queries) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// Log the request body for debugging purposes
 		log.Println("Request body:", string(c.Body()))
 
-		// Log the whole request for debugging purposes
 		log.Println("Request:", c.Request().String())
 
 		var user models.RegisterUser
@@ -27,17 +25,14 @@ func RegisterUserHandler(conn *sqlc.Queries) fiber.Handler {
 			})
 		}
 
-		err := services.RegisterUser(user, conn)
+		d, err := services.RegisterUser(user, conn)
 		if err != nil {
 			util.LogError(err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Failed to register user",
 			})
 		}
-		// save the user to the database
 
-		return c.JSON(fiber.Map{
-			"message": "User registered successfully",
-		})
+		return util.SendResponse(c, 200, d, "User registered successfully")
 	}
 }

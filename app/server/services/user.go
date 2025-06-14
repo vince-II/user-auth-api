@@ -9,16 +9,16 @@ import (
 )
 
 type UserService interface {
-	RegisterUser(ctx context.Context) (models.RegisterUser, error)
+	RegisterUser(ctx context.Context) (map[string]interface{}, error)
 }
 
-func RegisterUser(user models.RegisterUser, conn *sqlc.Queries) error {
+func RegisterUser(user models.RegisterUser, conn *sqlc.Queries) (map[string]interface{}, error) {
 	hashedPassword, err := util.HashPassword(user.Password)
 	if err != nil {
 		util.LogError(err)
-		return nil
+		return nil, err
 	}
-	// create a user data
+
 	params := sqlc.CreateUserParams{
 		Username:  user.Username,
 		Password:  hashedPassword,
@@ -27,16 +27,20 @@ func RegisterUser(user models.RegisterUser, conn *sqlc.Queries) error {
 	}
 
 	data, err := conn.CreateUser(context.Background(), params)
-	// create an instance of the database connection
-
-	// create a user login data
 
 	if err != nil {
 		util.LogError(err)
-		return err
+		return nil, err
 	}
-	// param, err = json.Marshal(data)
+
 	util.LogInfo("User registered successfully", data)
-	return nil
+	result := map[string]interface{}{
+		"id":        data.ID,
+		"username":  data.Username,
+		"firstName": data.FirstName,
+		"lastName":  data.LastName,
+	}
+
+	return result, nil
 
 }
