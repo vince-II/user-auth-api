@@ -1,4 +1,4 @@
-package models
+package dto
 
 type Post struct {
 	ID        int    `json:"id"`

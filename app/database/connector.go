@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/vince-II/auth-post-api/helpers"
+	"github.com/vince-II/auth-post-api/server/helpers"
 )
 
 func ConnectToDb(dbUrl string) *pgxpool.Pool {

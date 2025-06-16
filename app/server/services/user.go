@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/vince-II/auth-post-api/internal/sqlc"
-	"github.com/vince-II/auth-post-api/server/models"
+	"github.com/vince-II/auth-post-api/server/dto"
 	"github.com/vince-II/auth-post-api/server/util"
 )
 
@@ -12,7 +12,7 @@ type UserService interface {
 	RegisterUser(ctx context.Context) (map[string]interface{}, error)
 }
 
-func RegisterUser(user models.RegisterUser, conn *sqlc.Queries) (map[string]interface{}, error) {
+func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interface{}, error) {
 	hashedPassword, err := util.HashPassword(user.Password)
 	if err != nil {
 		util.LogError(err)

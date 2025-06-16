@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/vince-II/auth-post-api/internal/sqlc"
-	"github.com/vince-II/auth-post-api/server/models"
+	"github.com/vince-II/auth-post-api/server/dto"
 	"github.com/vince-II/auth-post-api/server/services"
 	"github.com/vince-II/auth-post-api/server/util"
 )
@@ -16,7 +16,7 @@ func RegisterUserHandler(conn *sqlc.Queries) fiber.Handler {
 
 		log.Println("Request:", c.Request().String())
 
-		var user models.RegisterUser
+		var user dto.RegisterUser
 
 		if err := c.BodyParser(&user); err != nil {
 			log.Println("Error parsing request body:", err)
