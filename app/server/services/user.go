@@ -15,10 +15,9 @@ type UserService interface {
 }
 
 func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interface{}, error) {
+	alreadyExist := doesUsernameExist(user.Username, conn)
 
-	isTaken := isUsernameTaken(user.Username, conn)
-
-	if isTaken {
+	if alreadyExist {
 		log.Infof("Username already taken: %s", user.Username)
 		return nil, errors.New("Username already taken")
 	}
@@ -55,7 +54,39 @@ func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interfa
 
 }
 
-func isUsernameTaken(username string, conn *sqlc.Queries) bool {
+func LoginUser(user dto.LoginUser, conn *sqlc.Queries) (map[string]interface{}, error) {
+	exist := doesUsernameExist(user.Username, conn)
+
+	if !exist {
+		log.Infof("Username not found: %s", user.Username)
+		return nil, errors.New("Username not found")
+	}
+
+	data, err := conn.GetUserByUsername(context.Background(), user.Username)
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil, err
+	}
+
+	hashedPassword := data.Password
+
+	if !util.CheckPasswordHash(user.Password, hashedPassword) {
+		log.Infof("Invalid password for username: %s", user.Username)
+		return nil, errors.New("Invalid credentials")
+	}
+
+	// prepare the response data + jwt token ?
+	result := map[string]interface{}{
+		"id":        data.ID,
+		"username":  data.Username,
+		"firstName": data.FirstName,
+		"lastName":  data.LastName,
+	}
+
+	return result, nil
+}
+
+func doesUsernameExist(username string, conn *sqlc.Queries) bool {
 	exist, err := conn.UsernameExists(context.Background(), username)
 
 	if err != nil {

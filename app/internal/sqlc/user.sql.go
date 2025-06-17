@@ -56,6 +56,33 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const GetUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, username, password, first_name, last_name
+FROM users 
+WHERE username = $1
+`
+
+type GetUserByUsernameRow struct {
+	ID        int32  `json:"id"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error) {
+	row := q.db.QueryRow(ctx, GetUserByUsername, username)
+	var i GetUserByUsernameRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Password,
+		&i.FirstName,
+		&i.LastName,
+	)
+	return i, err
+}
+
 const UsernameExists = `-- name: UsernameExists :one
 SELECT EXISTS (
     SELECT id, username, password, first_name, last_name, last_login, created_at

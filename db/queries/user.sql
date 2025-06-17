@@ -15,3 +15,9 @@ SELECT EXISTS (
     FROM users 
     WHERE username = @username
 );
+
+-- name: GetUserByUsername :one
+SELECT id, username, password, first_name, last_name
+FROM users 
+WHERE username = @username;
+ 
