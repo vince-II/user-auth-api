@@ -12,9 +12,10 @@ func NewServer(ctx context.Context, conn *sqlc.Queries) *fiber.App {
 	app := fiber.New()
 
 	api := app.Group("/api")
-	v1 := api.Group("/v1")
-	v1.Post("/register", handlers.RegisterUserHandler(conn))
 
+	v1 := api.Group("/v1")
+	v1.Post("/register", handlers.RegisterUser(conn))
 	v1.Get("/health", handlers.HealthCheck())
+
 	return app
 }

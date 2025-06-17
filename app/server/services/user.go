@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/vince-II/auth-post-api/internal/sqlc"
 	"github.com/vince-II/auth-post-api/server/dto"
@@ -13,7 +14,12 @@ type UserService interface {
 }
 
 func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interface{}, error) {
-	hashedPassword, err := util.HashPassword(user.Password)
+	if exist, _ := conn.UsernameExists(context.Background(), user.Username); exist {
+		util.LogInfo("Username already exists", user.Username)
+		return nil, errors.New("username already exists")
+	}
+
+	hPassword, err := util.HashPassword(user.Password)
 	if err != nil {
 		util.LogError(err)
 		return nil, err
@@ -21,7 +27,7 @@ func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interfa
 
 	params := sqlc.CreateUserParams{
 		Username:  user.Username,
-		Password:  hashedPassword,
+		Password:  hPassword,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 	}

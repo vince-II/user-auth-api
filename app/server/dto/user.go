@@ -17,3 +17,8 @@ type RegisterUser struct {
 	Username  string `json:"username" validate:"required"` // check if username is unique
 	Password  string `json:"password" validate:"required, min=8,max=32"`
 }
+
+type LoginUser struct {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required,min=8,max=32"`
+}

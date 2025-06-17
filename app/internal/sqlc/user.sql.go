@@ -12,7 +12,13 @@ import (
 )
 
 const CreateUser = `-- name: CreateUser :one
-INSERT INTO users (username, password, first_name, last_name)
+INSERT INTO users 
+(
+  username, 
+  password, 
+  first_name, 
+  last_name
+)
 VALUES ($1, $2, $3, $4) 
 RETURNING id, username, first_name, last_name, last_login
 `
@@ -50,21 +56,17 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
-const GetUserById = `-- name: GetUserById :one
-SELECT id, username, password, first_name, last_name, last_login, created_at FROM users WHERE id = $1
+const UsernameExists = `-- name: UsernameExists :one
+SELECT EXISTS (
+    SELECT id, username, password, first_name, last_name, last_login, created_at
+    FROM users 
+    WHERE username = $1
+)
 `
 
-func (q *Queries) GetUserById(ctx context.Context, id int32) (User, error) {
-	row := q.db.QueryRow(ctx, GetUserById, id)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Password,
-		&i.FirstName,
-		&i.LastName,
-		&i.LastLogin,
-		&i.CreatedAt,
-	)
-	return i, err
+func (q *Queries) UsernameExists(ctx context.Context, username string) (bool, error) {
+	row := q.db.QueryRow(ctx, UsernameExists, username)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }

@@ -10,12 +10,8 @@ import (
 	"github.com/vince-II/auth-post-api/server/util"
 )
 
-func RegisterUserHandler(conn *sqlc.Queries) fiber.Handler {
+func RegisterUser(conn *sqlc.Queries) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		log.Println("Request body:", string(c.Body()))
-
-		log.Println("Request:", c.Request().String())
-
 		var user dto.RegisterUser
 
 		if err := c.BodyParser(&user); err != nil {
