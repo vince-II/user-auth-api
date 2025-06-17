@@ -14,6 +14,8 @@ func NewServer(ctx context.Context, conn *sqlc.Queries) *fiber.App {
 	api := app.Group("/api")
 
 	v1 := api.Group("/v1")
+
+	// TODO: cors middleware
 	v1.Post("/register", handlers.RegisterUser(conn))
 	v1.Get("/health", handlers.HealthCheck())
 
