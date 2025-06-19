@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
 
-	"github.com/vince-II/auth-post-api/app/server"
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/vince-II/auth-post-api/server"
 )
 
 func main() {
@@ -12,7 +12,7 @@ func main() {
 	defer cancel()
 
 	app := server.NewServer(ctx)
+	log.Infof("Server starting...")
 	log.Fatal(app.Listen(":3000"))
 
-	// Start the server on port 3000
 }

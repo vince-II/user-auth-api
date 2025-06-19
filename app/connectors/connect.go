@@ -43,6 +43,5 @@ func ConnectToDb(creds DBCredentials, ctx context.Context) (*pgxpool.Pool, error
 		return nil, err
 	}
 
-	log.Infof("Connected to database!")
 	return pool, nil
 }

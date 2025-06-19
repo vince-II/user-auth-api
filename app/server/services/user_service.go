@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/vince-II/auth-post-api/app/connectors"
-	"github.com/vince-II/auth-post-api/app/internal/database"
-	"github.com/vince-II/auth-post-api/app/server/dto"
-	"github.com/vince-II/auth-post-api/app/server/util"
+	"github.com/vince-II/auth-post-api/connectors"
+	"github.com/vince-II/auth-post-api/internal/database"
+	"github.com/vince-II/auth-post-api/server/dto"
+	"github.com/vince-II/auth-post-api/server/util"
 
 	log "github.com/gofiber/fiber/v2/log"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -24,7 +24,7 @@ func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interf
 	alreadyExist := doesUsernameExist(user.Username, pool)
 
 	if alreadyExist {
-		log.Infof("Username already taken: %s", user.Username)
+		log.Errorf("Username already taken: %s", user.Username)
 		return nil, errors.New("Username already taken")
 	}
 
@@ -48,7 +48,7 @@ func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interf
 		return nil, err
 	}
 
-	log.Infof("User registered successfully", data)
+	log.Infof("User registered successfully %v", data)
 	result := map[string]interface{}{
 		"id":        data.ID,
 		"username":  data.Username,
@@ -58,43 +58,6 @@ func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interf
 
 	return result, nil
 
-}
-
-func LoginUser(user dto.LoginUser, ctx context.Context) (map[string]interface{}, error) {
-	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
-
-	if err != nil {
-		panic("Failed to connect to database: " + err.Error())
-	}
-	exist := doesUsernameExist(user.Username, pool)
-
-	if !exist {
-		log.Infof("Username not found: %s", user.Username)
-		return nil, errors.New("Username not found")
-	}
-
-	data, err := database.New(pool).GetUserByUsername(context.Background(), user.Username)
-	if err != nil {
-		log.Errorf(err.Error())
-		return nil, err
-	}
-
-	hashedPassword := data.Password
-
-	if !util.CheckPasswordHash(user.Password, hashedPassword) {
-		log.Infof("Invalid password for username: %s", user.Username)
-		return nil, errors.New("Invalid credentials")
-	}
-
-	// prepare the response data + jwt token ?
-	result := map[string]interface{}{
-		"id":        data.ID,
-		"username":  data.Username,
-		"firstName": data.FirstName,
-		"lastName":  data.LastName,
-	}
-
-	return result, nil
 }
 
 func doesUsernameExist(username string, pool *pgxpool.Pool) bool {

@@ -5,7 +5,13 @@ services:
       dockerfile: Dockerfile # note: this is the step by step procedure to build the image
     environment:
       - PORT=3000
-      - DATABASE_URL=postgres://postgres:postgres@test_db:5432/test_db?sslmode=disable
+      # - DATABASE_URL=postgres://postgres:postgres@test_db:5432/test_db?sslmode=disable
+      - DB_HOST=test_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=test_db
+      - DB_PORT=5432
+      - JWT_SECRET=a-string-secret-at-least-256-bits-long
     ports:
       - 3000:3000
     volumes:
@@ -16,6 +22,7 @@ services:
   test_db:
     container_name: test_db
     image: postgres:17-alpine
+    restart: always
     environment:
       - POSTGRES_DB=test_db
       - POSTGRES_USER=postgres
@@ -24,4 +31,4 @@ services:
       - 5435:5432
     volumes:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-      - ./db_data:/var/lib/postgresql/data
+      - ./db/db_data:/var/lib/postgresql/data
