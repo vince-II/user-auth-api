@@ -4,18 +4,24 @@ import (
 	"context"
 	"errors"
 
+	"github.com/vince-II/auth-post-api/app/connectors"
+	"github.com/vince-II/auth-post-api/app/internal/database"
+	"github.com/vince-II/auth-post-api/app/server/dto"
+	"github.com/vince-II/auth-post-api/app/server/util"
+
 	log "github.com/gofiber/fiber/v2/log"
-	"github.com/vince-II/auth-post-api/internal/sqlc"
-	"github.com/vince-II/auth-post-api/server/dto"
-	"github.com/vince-II/auth-post-api/server/util"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type UserService interface {
-	RegisterUser(ctx context.Context) (map[string]interface{}, error)
-}
+func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interface{}, error) {
 
-func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interface{}, error) {
-	alreadyExist := doesUsernameExist(user.Username, conn)
+	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
+
+	if err != nil {
+		panic("Failed to connect to database: " + err.Error())
+	}
+
+	alreadyExist := doesUsernameExist(user.Username, pool)
 
 	if alreadyExist {
 		log.Infof("Username already taken: %s", user.Username)
@@ -28,14 +34,14 @@ func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interfa
 		return nil, err
 	}
 
-	params := sqlc.CreateUserParams{
+	params := database.CreateUserParams{
 		Username:  user.Username,
 		Password:  hashedPassword,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 	}
 
-	data, err := conn.CreateUser(context.Background(), params)
+	data, err := database.New(pool).CreateUser(context.Background(), params)
 
 	if err != nil {
 		log.Errorf(err.Error())
@@ -54,15 +60,20 @@ func RegisterUser(user dto.RegisterUser, conn *sqlc.Queries) (map[string]interfa
 
 }
 
-func LoginUser(user dto.LoginUser, conn *sqlc.Queries) (map[string]interface{}, error) {
-	exist := doesUsernameExist(user.Username, conn)
+func LoginUser(user dto.LoginUser, ctx context.Context) (map[string]interface{}, error) {
+	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
+
+	if err != nil {
+		panic("Failed to connect to database: " + err.Error())
+	}
+	exist := doesUsernameExist(user.Username, pool)
 
 	if !exist {
 		log.Infof("Username not found: %s", user.Username)
 		return nil, errors.New("Username not found")
 	}
 
-	data, err := conn.GetUserByUsername(context.Background(), user.Username)
+	data, err := database.New(pool).GetUserByUsername(context.Background(), user.Username)
 	if err != nil {
 		log.Errorf(err.Error())
 		return nil, err
@@ -86,8 +97,8 @@ func LoginUser(user dto.LoginUser, conn *sqlc.Queries) (map[string]interface{}, 
 	return result, nil
 }
 
-func doesUsernameExist(username string, conn *sqlc.Queries) bool {
-	exist, err := conn.UsernameExists(context.Background(), username)
+func doesUsernameExist(username string, pool *pgxpool.Pool) bool {
+	exist, err := database.New(pool).UsernameExists(context.Background(), username)
 
 	if err != nil {
 		log.Errorf("Error checking if username exists: %v", err)
