@@ -94,9 +94,20 @@ func (q *Queries) UpdateLastLogin(ctx context.Context, id int32) error {
 	return err
 }
 
+const UpdateLastLogout = `-- name: UpdateLastLogout :exec
+UPDATE users
+SET last_logout = now()
+WHERE id = $1
+`
+
+func (q *Queries) UpdateLastLogout(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, UpdateLastLogout, id)
+	return err
+}
+
 const UsernameExists = `-- name: UsernameExists :one
 SELECT EXISTS (
-    SELECT id, username, password, first_name, last_name, last_login, created_at
+    SELECT id, username, password, first_name, last_name, last_login, last_logout, created_at
     FROM users 
     WHERE username = $1
 )

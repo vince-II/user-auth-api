@@ -35,7 +35,7 @@ func LoginUser(ctx context.Context) fiber.Handler {
 		var user dto.LoginUser
 
 		if err := c.BodyParser(&user); err != nil {
-			log.Errorf(err.Error())
+			log.Errorf("failed to parse data %v", err)
 			return util.SendError(c, fiber.ErrBadRequest.Code, "Invalid request body")
 		}
 
@@ -49,9 +49,21 @@ func LoginUser(ctx context.Context) fiber.Handler {
 			return util.SendError(c, fiber.StatusInternalServerError, "Failed to login user")
 		}
 
-		// todo: prep the response data
-		// todo: prep the data type
+		return util.SendResponse(c, fiber.StatusOK, d, "Logged in successfully")
+	}
+}
 
-		return util.SendResponse(c, fiber.StatusOK, d, "User logged in successfully")
+func LogoutUser(ctx context.Context) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+
+		// type assertion
+		userID := c.Locals("user_id").(int32)
+
+		if err := services.LogoutUser(userID, ctx); err != nil {
+
+		}
+
+		return util.SendResponse(c, fiber.StatusOK, map[string]interface{}{}, "Logged out successfully")
+
 	}
 }

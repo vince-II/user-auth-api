@@ -1,17 +1,29 @@
 package middleware
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/vince-II/auth-post-api/server/util"
+)
 
-func JWTAuth() fiber.Handler {
+func AuthenticateToken() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		authHeader := c.Get("Authorization")
+		authHeader := c.GetRespHeader("Authorization")
 		if authHeader == "" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Authorization header is required",
-			})
+			return util.SendError(c, fiber.StatusUnauthorized, "Missing Authorization Token")
 		}
 
-		// Proceed to the next handler
+		claims, err := util.VerifyToken(authHeader)
+		if err != nil {
+			log.Errorf("Token verification failed: %v", err)
+
+			return util.SendError(c, fiber.StatusForbidden, err.Error())
+		}
+
+		// saves in request context
+		c.Locals("user_id", claims.UserID)
+		c.Locals("username", claims.Username)
+
 		return c.Next()
 	}
 }

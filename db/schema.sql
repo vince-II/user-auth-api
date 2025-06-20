@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     last_login TIMESTAMP,
+    last_logout TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 

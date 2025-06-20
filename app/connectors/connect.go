@@ -31,6 +31,8 @@ func NewDBCredentials() *DBCredentials {
 }
 
 func ConnectToDb(creds DBCredentials, ctx context.Context) (*pgxpool.Pool, error) {
+	log.Info("Connecting to DB via pool connection")
+
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		creds.host, creds.port, creds.user, creds.password, creds.dbName,

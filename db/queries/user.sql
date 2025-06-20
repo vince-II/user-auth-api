@@ -24,4 +24,9 @@ WHERE username = @username;
 -- name: UpdateLastLogin :exec
 UPDATE users
 SET last_login = now()
-WHERE id = $1;
+WHERE id = @id;
+
+-- name: UpdateLastLogout :exec
+UPDATE users
+SET last_logout = now()
+WHERE id = @id;

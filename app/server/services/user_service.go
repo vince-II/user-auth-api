@@ -18,7 +18,8 @@ func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interf
 	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
 
 	if err != nil {
-		panic("Failed to connect to database: " + err.Error())
+		log.Errorf("Failed to connect to database: %v" + err.Error())
+		return nil, errors.New("Failed to connect to database")
 	}
 
 	alreadyExist := doesUsernameExist(user.Username, pool)
