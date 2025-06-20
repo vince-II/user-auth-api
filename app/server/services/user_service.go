@@ -14,7 +14,6 @@ import (
 )
 
 func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interface{}, error) {
-
 	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
 
 	if err != nil {
@@ -51,10 +50,10 @@ func RegisterUser(user dto.RegisterUser, ctx context.Context) (map[string]interf
 
 	log.Infof("User registered successfully %v", data)
 	result := map[string]interface{}{
-		"id":        data.ID,
-		"username":  data.Username,
-		"firstName": data.FirstName,
-		"lastName":  data.LastName,
+		"id":         data.ID,
+		"username":   data.Username,
+		"first_name": data.FirstName,
+		"last_name":  data.LastName,
 	}
 
 	return result, nil

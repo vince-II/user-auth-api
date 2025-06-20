@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/vince-II/auth-post-api/server/util"
@@ -13,7 +15,9 @@ func AuthenticateToken() fiber.Handler {
 			return util.SendError(c, fiber.StatusUnauthorized, "Missing Authorization Token")
 		}
 
-		claims, err := util.VerifyToken(authHeader)
+		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+
+		claims, err := util.VerifyToken(tokenStr)
 		if err != nil {
 			log.Errorf("Token verification failed: %v", err)
 

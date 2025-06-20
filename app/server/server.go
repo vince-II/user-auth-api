@@ -18,9 +18,10 @@ func NewServer(ctx context.Context) *fiber.App {
 	auth.Post("/register", handlers.RegisterUser(ctx))
 	auth.Post("/login", handlers.LoginUser(ctx))
 	auth.Post("/logout", middleware.AuthenticateToken(), handlers.LogoutUser(ctx))
-	// TODO: cors middleware
+
 	v1 := api.Group("/v1")
 	v1.Get("/health", handlers.HealthCheck())
-
+	v1.Post("/post", middleware.AuthenticateToken(), handlers.CreatePost(ctx))
+	v1.Put("/post", middleware.AuthenticateToken(), handlers.UpdatePost(ctx))
 	return app
 }

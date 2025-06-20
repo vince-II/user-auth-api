@@ -30,3 +30,10 @@ WHERE id = @id;
 UPDATE users
 SET last_logout = now()
 WHERE id = @id;
+
+-- name: UserExists :one
+SELECT EXISTS (
+    SELECT *
+    FROM users 
+    WHERE id = @id
+);
