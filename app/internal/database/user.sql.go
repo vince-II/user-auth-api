@@ -83,6 +83,17 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUs
 	return i, err
 }
 
+const UpdateLastLogin = `-- name: UpdateLastLogin :exec
+UPDATE users
+SET last_login = now()
+WHERE id = $1
+`
+
+func (q *Queries) UpdateLastLogin(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, UpdateLastLogin, id)
+	return err
+}
+
 const UsernameExists = `-- name: UsernameExists :one
 SELECT EXISTS (
     SELECT id, username, password, first_name, last_name, last_login, created_at

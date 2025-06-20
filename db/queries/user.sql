@@ -21,3 +21,7 @@ SELECT id, username, password, first_name, last_name
 FROM users 
 WHERE username = @username;
  
+-- name: UpdateLastLogin :exec
+UPDATE users
+SET last_login = now()
+WHERE id = $1;

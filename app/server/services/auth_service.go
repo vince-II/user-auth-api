@@ -40,6 +40,13 @@ func LoginUser(user dto.LoginUser, ctx context.Context) (map[string]interface{},
 		return nil, errors.New("Invalid credentials")
 	}
 
+	err = database.New(pool).UpdateLastLogin(ctx, data.ID)
+	if err != nil {
+		log.Warnf("Could not update last_login for user %s: %v", data.Username, err)
+		return nil, errors.New("Failed to update login time")
+
+	}
+
 	signedToken, _ := GenerateJWT(int64(data.ID), data.Username)
 
 	if signedToken == "" {
