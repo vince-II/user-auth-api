@@ -10,14 +10,18 @@ VALUES(
 )
 RETURNING *;
 
+-- name: GetAllPostFromUser :one 
+SELECT *
+FROM post
+WHERE user_id = @user_id;
+
 -- name: UpdatePost :one
 UPDATE post
 SET content = @content
 WHERE id = @id
 RETURNING *;
 
-
--- name: GetAllPostFromUser :one 
-SELECT *
+-- name: DeletePost :exec
+DELETE 
 FROM post
-WHERE user_id = @user_id;
+WHERE id = @id;
