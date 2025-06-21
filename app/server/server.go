@@ -22,8 +22,10 @@ func NewServer(ctx context.Context) *fiber.App {
 	v1 := api.Group("/v1")
 	v1.Get("/health", handlers.HealthCheck())
 	v1.Post("/post", middleware.AuthenticateToken(), handlers.CreatePost(ctx))
-	v1.Put("/post", middleware.AuthenticateToken(), handlers.UpdatePost(ctx))
-	v1.Put("/delete", middleware.AuthenticateToken(), handlers.DeletePost(ctx))
+
+	// v1.Get("/posts/:id", middleware.AuthenticateToken(), handlers.CreatePost(ctx))
+	v1.Put("/posts/:id", middleware.AuthenticateToken(), handlers.UpdatePost(ctx))
+	v1.Delete("/posts/:id", middleware.AuthenticateToken(), handlers.DeletePost(ctx))
 
 	return app
 }

@@ -56,7 +56,7 @@ func doesUserExist(userID int32, pool *pgxpool.Pool) bool {
 	return exist
 }
 
-func UpdatePost(userID int32, p dto.PostParams, ctx context.Context) (map[string]interface{}, error) {
+func UpdatePost(postID int32, userID int32, p dto.PostParams, ctx context.Context) (map[string]interface{}, error) {
 	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
 	if err != nil {
 		log.Errorf("Failed to connect to database: %v" + err.Error())
@@ -71,7 +71,7 @@ func UpdatePost(userID int32, p dto.PostParams, ctx context.Context) (map[string
 	}
 
 	params := database.UpdatePostParams{
-		ID:      int32(p.ID),
+		ID:      postID,
 		Content: p.Content,
 	}
 
@@ -91,30 +91,26 @@ func UpdatePost(userID int32, p dto.PostParams, ctx context.Context) (map[string
 	return data, nil
 }
 
-func DeletePost(userID int32, p dto.PostParams, ctx context.Context) (map[string]interface{}, error) {
+func DeletePost(postID int32, userID int32, ctx context.Context) error {
 	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
 	if err != nil {
 		log.Errorf("Failed to connect to database: %v" + err.Error())
-		return nil, errors.New("Failed to connect to database")
+		return errors.New("Failed to connect to database")
 	}
 
 	exist := doesUserExist(userID, pool)
 
 	if !exist {
 		log.Errorf("User doesn't exist: %s")
-		return nil, errors.New("User doesn't exist")
+		return errors.New("User doesn't exist")
 	}
 
-	if err := database.New(pool).DeletePost(context.Background(), int32(p.ID)); err != nil {
+	if err := database.New(pool).DeletePost(context.Background(), postID); err != nil {
 		log.Errorf("Failed to delete post %v", err)
-		return nil, err
+		return err
 	}
 
 	log.Infof("Post was updated successfully")
 
-	data := map[string]interface{}{
-		"message": "post has been deleted",
-	}
-
-	return data, nil
+	return nil
 }

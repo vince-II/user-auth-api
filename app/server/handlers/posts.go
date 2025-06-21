@@ -34,6 +34,9 @@ func CreatePost(ctx context.Context) fiber.Handler {
 func UpdatePost(ctx context.Context) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var data dto.PostParams
+		var pathParam dto.PostPathParams
+
+		c.ParamsParser(&pathParam)
 
 		if err := c.BodyParser(&data); err != nil {
 			log.Errorf("Failed to parse data", err)
@@ -41,8 +44,9 @@ func UpdatePost(ctx context.Context) fiber.Handler {
 		}
 
 		userID := c.Locals("user_id").(int32)
+		postID := int32(pathParam.ID)
 
-		d, err := services.UpdatePost(userID, data, ctx)
+		d, err := services.UpdatePost(postID, userID, data, ctx)
 		if err != nil {
 			log.Errorf("Failed to create post %v", err.Error())
 			return util.SendError(c, fiber.StatusInternalServerError, "Failed to register user")
@@ -54,21 +58,18 @@ func UpdatePost(ctx context.Context) fiber.Handler {
 
 func DeletePost(ctx context.Context) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var data dto.PostParams
+		var pathParam dto.PostPathParams
 
-		if err := c.BodyParser(&data); err != nil {
-			log.Errorf("Failed to parse data", err)
-			return util.SendError(c, fiber.ErrBadRequest.Code, "Invalid request body")
-		}
+		c.ParamsParser(&pathParam)
+		postID := int32(pathParam.ID)
 
 		userID := c.Locals("user_id").(int32)
 
-		d, err := services.DeletePost(userID, data, ctx)
-		if err != nil {
+		if err := services.DeletePost(postID, userID, ctx); err != nil {
 			log.Errorf("Failed to create post %v", err.Error())
 			return util.SendError(c, fiber.StatusInternalServerError, "Failed to register user")
 		}
 
-		return util.SendResponse(c, fiber.StatusOK, d, "Post has been updated")
+		return util.SendResponse(c, fiber.StatusOK, nil, "Post has been updated")
 	}
 }

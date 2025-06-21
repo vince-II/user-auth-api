@@ -11,3 +11,7 @@ type PostParams struct {
 	ID      int    `json:"id,omitempty"`
 	Content string `json:"content" validate:"required"`
 }
+
+type PostPathParams struct {
+	ID uint `params:"id"`
+}
