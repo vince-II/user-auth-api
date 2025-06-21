@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	log "github.com/gofiber/fiber/v2/log"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -110,7 +111,37 @@ func DeletePost(postID int32, userID int32, ctx context.Context) error {
 		return err
 	}
 
-	log.Infof("Post was updated successfully")
+	log.Infof("Post was deleted successfully")
 
 	return nil
+}
+
+func GetPost(postID int32, userID int32, ctx context.Context) (map[string]interface{}, error) {
+	pool, err := connectors.ConnectToDb(*connectors.NewDBCredentials(), ctx)
+	if err != nil {
+		log.Errorf("Failed to connect to database: %v" + err.Error())
+		return nil, errors.New("Failed to connect to database")
+	}
+
+	exist := doesUserExist(userID, pool)
+
+	if !exist {
+		log.Errorf("User doesn't exist: %s")
+		return nil, errors.New("User doesn't exist")
+	}
+
+	result, err := database.New(pool).GetPost(context.Background(), postID)
+
+	if err != nil {
+		log.Errorf("Failed to delete post %v", err)
+		return nil, fmt.Errorf("%s %v", errors.New("Failed to connect to database"), err)
+	}
+
+	log.Infof("Post was read successfully")
+	data := map[string]interface{}{
+		"post_id": result.ID,
+		"content": result.Content,
+	}
+
+	return data, nil
 }

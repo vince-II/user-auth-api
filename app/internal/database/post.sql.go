@@ -53,14 +53,14 @@ func (q *Queries) DeletePost(ctx context.Context, id int32) error {
 	return err
 }
 
-const GetAllPostFromUser = `-- name: GetAllPostFromUser :one
+const GetPost = `-- name: GetPost :one
 SELECT id, user_id, content, created_at
 FROM post
-WHERE user_id = $1
+where id = $1
 `
 
-func (q *Queries) GetAllPostFromUser(ctx context.Context, userID int32) (Post, error) {
-	row := q.db.QueryRow(ctx, GetAllPostFromUser, userID)
+func (q *Queries) GetPost(ctx context.Context, id int32) (Post, error) {
+	row := q.db.QueryRow(ctx, GetPost, id)
 	var i Post
 	err := row.Scan(
 		&i.ID,

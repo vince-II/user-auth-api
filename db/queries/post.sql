@@ -10,11 +10,6 @@ VALUES(
 )
 RETURNING *;
 
--- name: GetAllPostFromUser :one 
-SELECT *
-FROM post
-WHERE user_id = @user_id;
-
 -- name: UpdatePost :one
 UPDATE post
 SET content = @content
@@ -25,3 +20,8 @@ RETURNING *;
 DELETE 
 FROM post
 WHERE id = @id;
+
+-- name: GetPost :one
+SELECT *
+FROM post
+where id = @id;

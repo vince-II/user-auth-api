@@ -24,7 +24,7 @@ func CreatePost(ctx context.Context) fiber.Handler {
 		d, err := services.CreatePost(userID, data, ctx)
 		if err != nil {
 			log.Errorf("Failed to create post %v", err.Error())
-			return util.SendError(c, fiber.StatusInternalServerError, "Failed to register user")
+			return util.SendError(c, fiber.StatusInternalServerError, "Failed to create post")
 		}
 
 		return util.SendResponse(c, fiber.StatusOK, d, "Post has been created")
@@ -49,7 +49,7 @@ func UpdatePost(ctx context.Context) fiber.Handler {
 		d, err := services.UpdatePost(postID, userID, data, ctx)
 		if err != nil {
 			log.Errorf("Failed to create post %v", err.Error())
-			return util.SendError(c, fiber.StatusInternalServerError, "Failed to register user")
+			return util.SendError(c, fiber.StatusInternalServerError, "Failed to update post")
 		}
 
 		return util.SendResponse(c, fiber.StatusOK, d, "Post has been updated")
@@ -67,9 +67,29 @@ func DeletePost(ctx context.Context) fiber.Handler {
 
 		if err := services.DeletePost(postID, userID, ctx); err != nil {
 			log.Errorf("Failed to create post %v", err.Error())
-			return util.SendError(c, fiber.StatusInternalServerError, "Failed to register user")
+			return util.SendError(c, fiber.StatusInternalServerError, "Failed to delete  user")
 		}
 
 		return util.SendResponse(c, fiber.StatusOK, nil, "Post has been updated")
+	}
+}
+
+func GetPost(ctx context.Context) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		var pathParam dto.PostPathParams
+
+		c.ParamsParser(&pathParam)
+		postID := int32(pathParam.ID)
+
+		userID := c.Locals("user_id").(int32)
+
+		d, err := services.GetPost(postID, userID, ctx)
+
+		if err != nil {
+			log.Errorf("Failed to create post %v", err.Error())
+			return util.SendError(c, fiber.StatusInternalServerError, "Failed to read post")
+		}
+
+		return util.SendResponse(c, fiber.StatusOK, d, "Post has been updated")
 	}
 }
