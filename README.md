@@ -19,28 +19,9 @@ Built with [Fiber](https://gofiber.io/), [GORM](https://gorm.io/), and JWT-based
 - **Go** (Golang)
 - **Fiber** – Web framework
 - **JWT** – Secure token-based authentication
-- **MongoDB** - Database
+- **SQLC + PGX** - Database
 
 ---
-
-## 📁 Project Structure
-
-```
-go-auth-post/
-├── cmd/ # Main application entrypoint
-│ └── main.go
-├── internal/
-│ ├── config/ # App configuration (e.g., .env loading)
-│ ├── database/ # Database connection
-│ ├── handlers/ # Route handlers for auth and posts
-│ ├── middleware/ # JWT middleware, error handling
-│ ├── models/ # GORM models: User, Post, etc.
-│ └── utils/ # Helpers: password hashing, token generation
-├── migrations/ # SQL migration files
-├── go.mod
-├── go.sum
-└── README.md
-```
 
 ## 🚀 Getting Started
 
@@ -67,18 +48,3 @@ JWT_SECRET=your_secret_key
 ```bash
 go run cmd/main.go
 ```
-
-## API Endpoints
-
-| Method | Endpoint        | Description               |
-| ------ | --------------- | ------------------------- |
-| POST   | `/api/register` | Register a new user       |
-| POST   | `/api/login`    | Login and get a JWT       |
-| GET    | `/api/posts`    | Get posts (auth required) |
-| POST   | `/api/posts`    | Create a post (auth)      |
-
-## ✍️ Author
-
-Made with Go ❤️ by vince-II
-
-Let me know if you'd like to include instructions for Docker, testing, or database migrations as well.
