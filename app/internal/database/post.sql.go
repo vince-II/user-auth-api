@@ -60,10 +60,11 @@ func (q *Queries) GetAllPostFromUser(ctx context.Context, userID int32) (Post, e
 	return i, err
 }
 
-const UpdatePost = `-- name: UpdatePost :exec
+const UpdatePost = `-- name: UpdatePost :one
 UPDATE post
 SET content = $1
 WHERE id = $2
+RETURNING id, user_id, content, created_at
 `
 
 type UpdatePostParams struct {
@@ -71,7 +72,14 @@ type UpdatePostParams struct {
 	ID      int32  `json:"id"`
 }
 
-func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) error {
-	_, err := q.db.Exec(ctx, UpdatePost, arg.Content, arg.ID)
-	return err
+func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error) {
+	row := q.db.QueryRow(ctx, UpdatePost, arg.Content, arg.ID)
+	var i Post
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Content,
+		&i.CreatedAt,
+	)
+	return i, err
 }

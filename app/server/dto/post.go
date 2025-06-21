@@ -7,6 +7,7 @@ type Post struct {
 	CreatedAt string `json:"created_at"`
 }
 
-type CreatePostParams struct {
+type PostParams struct {
+	ID      int    `json:"id,omitempty"`
 	Content string `json:"content" validate:"required"`
 }

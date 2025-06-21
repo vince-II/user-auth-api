@@ -10,10 +10,11 @@ VALUES(
 )
 RETURNING *;
 
--- name: UpdatePost :exec
+-- name: UpdatePost :one
 UPDATE post
 SET content = @content
-WHERE id = @id;
+WHERE id = @id
+RETURNING *;
 
 
 -- name: GetAllPostFromUser :one 
