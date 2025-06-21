@@ -1,7 +1,7 @@
 # auth-post-api
 
 A simple Go backend API with user authentication and post management.  
-Built with [Fiber](https://gofiber.io/), [GORM](https://gorm.io/), and JWT-based authentication.
+Built with [Fiber](https://gofiber.io/), [SQLC](https://docs.sqlc.dev/en/latest/index.html), and JWT-based authentication.
 
 ---
 
