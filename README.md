@@ -1,4 +1,4 @@
-# auth-post-api
+# user-auth-api
 
 A simple Go backend API with user authentication and post management.  
 Built with [Fiber](https://gofiber.io/), [SQLC](https://docs.sqlc.dev/en/latest/index.html), and JWT-based authentication.
