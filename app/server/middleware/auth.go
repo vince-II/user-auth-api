@@ -24,7 +24,6 @@ func AuthenticateToken() fiber.Handler {
 			return util.SendError(c, fiber.StatusForbidden, err.Error())
 		}
 
-		// saves in request context
 		c.Locals("user_id", claims.UserID)
 		c.Locals("username", claims.Username)
 

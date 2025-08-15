@@ -56,7 +56,6 @@ func LoginUser(ctx context.Context) fiber.Handler {
 func LogoutUser(ctx context.Context) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 
-		// type assertion
 		userID := c.Locals("user_id").(int32)
 
 		if err := services.LogoutUser(userID, ctx); err != nil {
